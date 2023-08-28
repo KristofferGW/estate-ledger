@@ -17,6 +17,7 @@ app.get('/blocks', controller.getBlocks);
 app.post('/mine', controller.mineBlock);
 app.post('/addProperty', controller.addProperty);
 app.post('/receiveBlock', controller.receiveBlock);
+app.post('/sendProperty', controller.sendProperty);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

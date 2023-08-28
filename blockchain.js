@@ -1,4 +1,5 @@
 const Block = require('./block');
+const {removeFromOwnership, addToOwnership} = require('./ownership');
 
 class Blockchain {
     constructor() {
@@ -25,8 +26,20 @@ class Blockchain {
             newBlock.hash = newBlock.calculateHash();
             console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
         }
+
+        pendingList.forEach(transaction => {
+            const { sender, property } = transaction;
+
+            const owner = findOwner(user);
+
+            if (owner) {
+                addToOwnership(owner, property);
+            }
+        });
+
         console.log(`Block mined: ${newBlock.hash}`);
         this.chain.push(newBlock);
+
     }
 }
 
