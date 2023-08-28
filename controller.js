@@ -11,7 +11,7 @@ function getBlocks(req, res) {
 
 function mineBlock(req, res) {
     const data = req.body.data;
-    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
+    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), transactions);
     estateLedger.mineBlock(newBlock);
     res.json(newBlock);
 }
@@ -61,5 +61,4 @@ module.exports = {
     addProperty,
     receiveBlock,
     sendProperty,
-    pendingList,
 };
