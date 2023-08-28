@@ -1,5 +1,6 @@
 const Block = require('./block');
 const {removeFromOwnership, addToOwnership} = require('./ownership');
+const pendingList = require('./controller');
 
 class Blockchain {
     constructor() {
@@ -30,7 +31,7 @@ class Blockchain {
         pendingList.forEach(transaction => {
             const { sender, property } = transaction;
 
-            const owner = findOwner(user);
+            const owner = findOwner(sender);
 
             if (owner) {
                 addToOwnership(owner, property);

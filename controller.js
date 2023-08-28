@@ -61,4 +61,5 @@ module.exports = {
     addProperty,
     receiveBlock,
     sendProperty,
+    pendingList,
 };
