@@ -21,7 +21,7 @@ function getBlocks(req, res) {
 function mineBlock(req, res) {
     // const data = req.body.data;
     // const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
-    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), pendingList);
+    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), []);
     estateLedger.mineBlock(newBlock);
     pendingList = [];
     res.json(newBlock);
@@ -39,7 +39,7 @@ function addProperty(req, res) {
 
     const transaction = { user, property };
 
-    pendingList.push(transaction);
+    estateLedger.pendingList.push(transaction);
 
     res.json({message: 'Property added to pending list'});
 }

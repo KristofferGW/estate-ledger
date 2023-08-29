@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const controller = require('./controller');
-const Blockchain = require('./blockchain');
 const Block = require('./block');
 const network = require('./network');
 

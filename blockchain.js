@@ -1,10 +1,10 @@
 const Block = require('./block');
 const {removeFromOwnership, addToOwnership, findOwner, propertyOwnership} = require('./ownership');
-let pendingList = [];
 
 class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
+        this.pendingList = [];
     }
 
     createGenesisBlock() {
@@ -37,9 +37,9 @@ class Blockchain {
             console.log('Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}');
         }
 
-        newBlock.transactions = [...pendingList];
+        newBlock.transactions = this.pendingList;
 
-        pendingList.forEach(transaction => {
+        this.pendingList.forEach(transaction => {
             const {user, property} = transaction;
 
             const owner = findOwner(user);
@@ -51,7 +51,7 @@ class Blockchain {
             }
         });
 
-        pendingList = [];
+        this.pendingList = [];
 
         console.log(`Block mined: ${newBlock.hash}`);
         console.log('property ownership', propertyOwnership)
@@ -59,4 +59,4 @@ class Blockchain {
     }
 }
 
-module.exports = {Blockchain, pendingList};
+module.exports = {Blockchain};
