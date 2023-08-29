@@ -1,7 +1,13 @@
-const propertyOwnership = {
-    'user1': ['property1', 'property2'],
-    'user2': ['property3'],
-};
+const propertyOwnership = {};
+
+function findOwner(user) {
+    for (const owner in propertyOwnership) {
+        if (propertyOwnership[owner].includes(user)) {
+            return owner;
+        }
+    }
+    return null;
+}
 
 function removeFromOwnership(user, property) {
     if (propertyOwnership[user]) {
@@ -24,4 +30,6 @@ function addToOwnership(user, property) {
 module.exports = {
     removeFromOwnership,
     addToOwnership,
+    propertyOwnership,
+    findOwner
 }

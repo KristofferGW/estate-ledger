@@ -1,5 +1,5 @@
 const Block = require('./block');
-const {removeFromOwnership, addToOwnership} = require('./ownership');
+const {removeFromOwnership, addToOwnership, findOwner, propertyOwnership} = require('./ownership');
 let pendingList = [];
 
 class Blockchain {
@@ -15,26 +15,47 @@ class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
-    // addBlock(newBlock, transactions) {
-    //     newBlock.previousHash = this.getLatestBlock().hash;
-    //     newBlock.transactions = transactions;
-    //     newBlock.hash = newBlock.calculateHash();
+    // mineBlock(newBlock) {
+    //     while (newBlock.hash.substring(0, 2) !== '00') {
+    //         newBlock.nonce++;
+    //         newBlock.hash = newBlock.calculateHash();
+    //         console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
+    //     }
+
+    //     newBlock.transactions = pendingList;
+    //     pendingList = [];
+
+    //     console.log(`Block mined: ${newBlock.hash}`);
     //     this.chain.push(newBlock);
+
     // }
 
     mineBlock(newBlock) {
         while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
-            console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
+            console.log('Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}');
         }
 
-        newBlock.transactions = pendingList;
+        newBlock.transactions = [...pendingList];
+
+        pendingList.forEach(transaction => {
+            const {user, property} = transaction;
+
+            const owner = findOwner(user);
+
+            if (owner) {
+                addToOwnership(owner, property);
+            } else {
+                propertyOwnership[user] = [property];
+            }
+        });
+
         pendingList = [];
 
         console.log(`Block mined: ${newBlock.hash}`);
+        console.log('property ownership', propertyOwnership)
         this.chain.push(newBlock);
-
     }
 }
 
