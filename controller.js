@@ -21,7 +21,7 @@ function getBlocks(req, res) {
 
 function mineBlock(req, res) {
     const data = req.body.data;
-    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), transactions);
+    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
     estateLedger.mineBlock(newBlock);
     res.json(newBlock);
 }
