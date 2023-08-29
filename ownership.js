@@ -20,9 +20,11 @@ function removeFromOwnership(user, property) {
 
 function addToOwnership(user, property) {
     if (!propertyOwnership[user]) {
-        propertyOwnership[user].push(property);
+        propertyOwnership[user] = [property];
     } else {
-        console.log('Already owner of property');
+        if (!propertyOwnership[user].includes(property)) {
+            propertyOwnership[user].push(property);
+        }
     }
     
 }

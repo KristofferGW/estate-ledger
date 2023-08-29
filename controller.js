@@ -12,7 +12,7 @@ function getBlocks(req, res) {
         previousHash: block.previousHash,
         nonce: block.nonce,
         hash: block.hash,
-        pendingList: pendingList
+        // pendingList: pendingList
     }));
 
     res.json(blocksWithTransactions);
