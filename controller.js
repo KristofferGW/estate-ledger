@@ -6,7 +6,17 @@ const estateLedger = new Blockchain();
 const pendingList = [];
 
 function getBlocks(req, res) {
-    res.json(estateLedger.chain);
+    const blocksWithTransactions = estateLedger.chain.map(block => ({
+        index: block.index,
+        timestamp: block.timestamp,
+        transactions: block.transactions,
+        previousHash: block.previousHash,
+        nonce: block.nonce,
+        hash: block.hash,
+        pendingList: pendingList
+    }));
+
+    res.json(blocksWithTransactions);
 }
 
 function mineBlock(req, res) {
