@@ -1,8 +1,8 @@
-const propertyOwnership = [];
+const propertyOwnership = {};
 
 function findOwner(user) {
-    for (const owner of propertyOwnership) {
-        if (owner.name === user) {
+    for (const owner in propertyOwnership) {
+        if (propertyOwnership[owner].includes(user)) {
             return owner;
         }
     }
@@ -10,24 +10,22 @@ function findOwner(user) {
 }
 
 function removeFromOwnership(user, property) {
-    let owner = findOwner(user);
-    if (owner) {
-        const index = owner.properties.indexOf(property);
+    if (propertyOwnership[user]) {
+        const index = propertyOwnership[user].indexOf(property);
         if (index !== -1) {
-            owner.properties.splice(index, 1);
+            propertyOwnership[user].splice(index, 1);
         }
     }
 }
 
 function addToOwnership(user, property) {
-    let owner = findOwner(user);
-    if (!owner) {
-        owner = { name: user, properties: [] };
-        propertyOwnership.push(owner);
+    if (!propertyOwnership[user]) {
+        propertyOwnership[user] = [property];
+    } else {
+        if (!propertyOwnership[user].includes(property)) {
+            propertyOwnership[user].push(property);
+        }
     }
-
-    owner.properties.push(property);
-    console.log('PO', propertyOwnership);
 }
 
 module.exports = {

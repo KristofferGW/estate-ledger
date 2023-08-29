@@ -36,27 +36,28 @@ class Blockchain {
             newBlock.hash = newBlock.calculateHash();
             console.log('Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}');
         }
-
-        newBlock.transactions = this.pendingList;
-
+    
+        newBlock.transactions = [...this.pendingList];
+    
         this.pendingList.forEach(transaction => {
-            const {user, property} = transaction;
-
+            const { user, property } = transaction;
+    
             const owner = findOwner(user);
-
+    
             if (owner) {
                 addToOwnership(owner, property);
             } else {
-                propertyOwnership[user] = [property];
+                addToOwnership(user, property); // Lägg till fastigheten för användaren
             }
         });
-
+    
         this.pendingList = [];
-
+    
         console.log(`Block mined: ${newBlock.hash}`);
-        console.log('property ownership', propertyOwnership)
+        console.log('property ownership', propertyOwnership);
         this.chain.push(newBlock);
     }
+    
 }
 
 module.exports = {Blockchain};
