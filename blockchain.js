@@ -1,6 +1,6 @@
 const Block = require('./block');
 const {removeFromOwnership, addToOwnership} = require('./ownership');
-const pendingList = [];
+let pendingList = [];
 
 class Blockchain {
     constructor() {
@@ -23,14 +23,14 @@ class Blockchain {
     // }
 
     mineBlock(newBlock) {
-        while (newBlock.hash.substring(0, 4) !== '0000') {
+        while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
             console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
         }
 
-        newBlock.transactions = pendingList.slice();
-        pendingList.length = 0;
+        newBlock.transactions = pendingList;
+        pendingList = [];
 
         console.log(`Block mined: ${newBlock.hash}`);
         this.chain.push(newBlock);
@@ -38,4 +38,4 @@ class Blockchain {
     }
 }
 
-module.exports = Blockchain;
+module.exports = {Blockchain, pendingList};

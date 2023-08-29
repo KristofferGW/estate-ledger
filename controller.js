@@ -1,9 +1,8 @@
-const Blockchain = require('./blockchain')
+let {Blockchain, pendingList} = require('./blockchain')
 const Block = require('./block');
 const propertyOwnership = require('./ownership');
 
 const estateLedger = new Blockchain();
-const pendingList = [];
 
 function getBlocks(req, res) {
     const blocksWithTransactions = estateLedger.chain.map(block => ({
@@ -20,9 +19,11 @@ function getBlocks(req, res) {
 }
 
 function mineBlock(req, res) {
-    const data = req.body.data;
-    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
+    // const data = req.body.data;
+    // const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
+    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), pendingList);
     estateLedger.mineBlock(newBlock);
+    pendingList = [];
     res.json(newBlock);
 }
 

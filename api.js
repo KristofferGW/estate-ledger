@@ -11,7 +11,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-const estateLedger = new Blockchain();
+// const estateLedger = new Blockchain();
 
 app.get('/blocks', controller.getBlocks);
 app.post('/mine', controller.mineBlock);
