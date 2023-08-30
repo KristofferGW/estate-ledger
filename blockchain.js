@@ -33,7 +33,7 @@ class Blockchain {
     mineBlock(newBlock) {
         const previousBlock = this.getLatestBlock();
 
-        if (!newBlock.isValid(previousBlock)) {
+        if (!newBlock.isHashValid(previousBlock)) {
             console.log('Block not valid');
             return;
         }

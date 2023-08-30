@@ -21,8 +21,9 @@ class Block {
             
     }
 
-    isValid(previousBlock) {
+    isHashValid(previousBlock) {
         const calculatedHash = this.calculateHash();
+
         if (calculatedHash !== this.hash) {
             return false;
         }
