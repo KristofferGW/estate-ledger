@@ -1,16 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const controller = require('./controller');
-const Block = require('./block');
-const network = require('./network');
+const controller = require('../controller');
 
 
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
-
 // const estateLedger = new Blockchain();
+
+app.use(bodyParser.json());
 
 app.get('/blocks', controller.getBlocks);
 app.post('/mine', controller.mineBlock);
