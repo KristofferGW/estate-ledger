@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const controller = require('../controller');
-
+const controller = require('./controller');
+// const {Blockchain} = require('../blockchain');
+// const Block = require('../block');
 
 const app = express();
-const port = 3001;
+const port = process.argv[2] || 3000 || 3000;
 
 // const estateLedger = new Blockchain();
 
