@@ -67,4 +67,4 @@ class Blockchain {
     
 }
 
-module.exports = {Blockchain, getPreviousBlock};
+module.exports = {Blockchain};

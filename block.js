@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const Blockchain = require('./blockchain');
 
-const estateLedger = new Blockchain();
+// const estateLedger = new Blockchain();
 
 class Block {
     constructor(index, timestamp, transactions, previousHash = '') {
