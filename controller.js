@@ -21,7 +21,8 @@ function getBlocks(req, res) {
 function mineBlock(req, res) {
     // const data = req.body.data;
     // const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
-    const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), []);
+    const latestBlock = estateLedger.getLatestBlock();
+    const newBlock = new Block(latestBlock.index +1, new Date(), [], latestBlock.hash);
     estateLedger.mineBlock(newBlock);
     pendingList = [];
     res.json(newBlock);
