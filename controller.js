@@ -28,10 +28,16 @@ function mineBlock(req, res) {
     res.json(newBlock);
 }
 
-function receiveBlock(req, res) {
-    const newBlock = req.body.newBlock;
-    estateLedger.addBlock(newBlock);
-    res.json({message: 'Block received and added to the chain.'});
+function receiveChain(req, res) {
+    const receivedChain = req.body.chain;
+    const currentChain = estateLedger.getChain();
+
+    if (receivedChain.length > currentChain.length) {
+        estateLedger.replaceChain(receivedChain);
+        res.json({message: 'Chain replaced with longer chain'});
+    } else {
+        res.json({message: 'No replacement needed'});
+    }
 }
 
 function addProperty(req, res) {
@@ -71,6 +77,6 @@ module.exports = {
     getBlocks,
     mineBlock,
     addProperty,
-    receiveBlock,
+    receiveChain,
     sendProperty,
 };

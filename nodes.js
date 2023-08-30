@@ -5,7 +5,7 @@ const controller = require('./controller');
 // const Block = require('../block');
 
 const app = express();
-const port = process.argv[2] || 3000 || 3000;
+const port = process.argv[2] || 3000;
 
 // const estateLedger = new Blockchain();
 
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.get('/blocks', controller.getBlocks);
 app.post('/mine', controller.mineBlock);
 app.post('/addProperty', controller.addProperty);
-app.post('/receiveBlock', controller.receiveBlock);
+app.post('/receiveChain', controller.receiveChain);
 app.post('/sendProperty', controller.sendProperty);
 
 app.listen(port, () => {

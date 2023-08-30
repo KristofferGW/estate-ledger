@@ -38,7 +38,7 @@ class Blockchain {
             return;
         }
 
-        while (newBlock.hash.substring(0, 2) !== '00') {
+        while (newBlock.hash.substring(0, 4) !== '0000') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
             console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
@@ -63,6 +63,35 @@ class Blockchain {
         console.log(`Block mined: ${newBlock.hash}`);
         console.log('property ownership', propertyOwnership);
         this.chain.push(newBlock);
+    }
+
+    isValidChain(chain) {
+        for (let i = 1; i < chain.length; i++) {
+            const currentBlock = chain[i];
+            const previousBlock = chain[i - 1];
+
+            if (currentBlock.hash !== currentBlock.calculateHash()) {
+                return false;
+            }
+
+            if (currentBlock.previousHash !== previousBlock.hash) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    getChain() {
+        return this.chain;
+    }
+
+    replaceChain(newChain) {
+        if (this.isValidChain(newChain) && newChain.length > this.chain.length) {
+            console.log('Replacing chain with longer chain');
+        } else {
+            console.log('Chain not valid or not longer than current chain');
+        }
     }
     
 }
