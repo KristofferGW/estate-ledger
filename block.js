@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const {getPreviousBlock} = require('./blockchain');
 
 class Block {
     constructor(index, timestamp, transactions, previousHash = '') {
@@ -16,6 +17,22 @@ class Block {
             .update(this.index + this.timestamp + JSON.stringify(this.transactions) + this.previousHash + this.nonce)
             .digest('hex')
             
+    }
+
+    isValid() {
+        const calculatedHash = this.calculateHash();
+        if (calculatedHash !== this.hash) {
+            return false;
+        }
+
+        if (this.index > 0) {
+            const previousBlock = this.getPreviousBlock();
+            if (previousBlock.hash !== this.previousHash) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

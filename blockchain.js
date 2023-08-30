@@ -30,7 +30,20 @@ class Blockchain {
 
     // }
 
+    getPreviousBlock() {
+        if (this.chain.length > 1) {
+            return this.chain[this.chain.length - 2];
+        } else {
+            return null;
+        }
+    }
+
     mineBlock(newBlock) {
+        if (!newBlock.isValid()) {
+            console.log('Block not valid');
+            return;
+        }
+
         while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
@@ -60,4 +73,4 @@ class Blockchain {
     
 }
 
-module.exports = {Blockchain};
+module.exports = {Blockchain, getPreviousBlock};
