@@ -41,7 +41,7 @@ class Blockchain {
         while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
-            console.log('Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}');
+            console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
         }
     
         newBlock.transactions = [...this.pendingList];
