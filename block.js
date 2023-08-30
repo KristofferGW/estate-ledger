@@ -1,5 +1,7 @@
 const crypto = require('crypto');
-const {getPreviousBlock} = require('./blockchain');
+const Blockchain = require('./blockchain');
+
+const estateLedger = new Blockchain();
 
 class Block {
     constructor(index, timestamp, transactions, previousHash = '') {
@@ -19,14 +21,13 @@ class Block {
             
     }
 
-    isValid() {
+    isValid(previousBlock) {
         const calculatedHash = this.calculateHash();
         if (calculatedHash !== this.hash) {
             return false;
         }
 
-        if (this.index > 0) {
-            const previousBlock = this.getPreviousBlock();
+        if (this.index > 0 && previousBlock) {
             if (previousBlock.hash !== this.previousHash) {
                 return false;
             }

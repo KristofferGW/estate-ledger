@@ -30,16 +30,10 @@ class Blockchain {
 
     // }
 
-    getPreviousBlock() {
-        if (this.chain.length > 1) {
-            return this.chain[this.chain.length - 2];
-        } else {
-            return null;
-        }
-    }
-
     mineBlock(newBlock) {
-        if (!newBlock.isValid()) {
+        const previousBlock = this.getLatestBlock();
+
+        if (!newBlock.isValid(previousBlock)) {
             console.log('Block not valid');
             return;
         }
