@@ -38,7 +38,7 @@ class Blockchain {
             return;
         }
 
-        while (newBlock.hash.substring(0, 4) !== '0000') {
+        while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
             console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);

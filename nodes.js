@@ -7,12 +7,18 @@ const controller = require('./controller');
 const app = express();
 const port = process.argv[2] || 3000;
 
+app.set('port', port);
+
 // const estateLedger = new Blockchain();
 
 app.use(bodyParser.json());
 
 app.get('/blocks', controller.getBlocks);
-app.post('/mine', controller.mineBlock);
+// app.post('/mine', controller.mineBlock);
+app.post('/mine', (req, res) => {
+    const currentNodePort = req.app.get('port');
+    controller.mineBlock(req, res, currentNodePort);
+})
 app.post('/addProperty', controller.addProperty);
 app.post('/receiveChain', controller.receiveChain);
 app.post('/sendProperty', controller.sendProperty);

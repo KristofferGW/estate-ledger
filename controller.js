@@ -1,8 +1,45 @@
 let {Blockchain, pendingList} = require('./blockchain')
 const Block = require('./block');
 const propertyOwnership = require('./ownership');
+const axios = require('axios');
 
 const estateLedger = new Blockchain();
+
+function isValidChain(chain) {
+    for (let i = 1; i < chain.length; i++) {
+        // const currentBlock = chain[i];
+        const currentBlock = new Block(
+            chain[i].index,
+            chain[i].timestamp,
+            chain[i].transactions,
+            chain[i].previousHash
+        );
+        const previousBlock = chain[i - 1];
+
+        if (currentBlock.hash !== currentBlock.calculateHash()) {
+            return false;
+        }
+
+        if (currentBlock.previousBlock !== previousBlock.hash) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function receiveChain(req, res) {
+    const receivedChain = req.body.chain;
+    // console.log(receivedChain);
+    const currentChain = estateLedger.getChain();
+
+    if (receivedChain && receivedChain.length > currentChain.length && isValidChain(receivedChain)) {
+        estateLedger.replaceChain(receivedChain);
+        res.json({message: 'Chain replaced with longer chain'});
+    } else {
+        res.status(400).json({message: 'Invalid or shorter chain received'});
+    }
+}
 
 function getBlocks(req, res) {
     const blocksWithTransactions = estateLedger.chain.map(block => ({
@@ -18,26 +55,88 @@ function getBlocks(req, res) {
     res.json(blocksWithTransactions);
 }
 
-function mineBlock(req, res) {
+function getOtherNodes(currentNodePort) {
+    const otherNodes = [];
+
+    if (currentNodePort === 3000) {
+        otherNodes.push('http://localhost:3001', 'http://localhost:3002');
+    } else if (currentNodePort === 3001) {
+        otherNodes.push('http://localhost:3000', 'http://localhost:3002');
+    } else if (currentNodePort === 3002) {
+        otherNodes.push('http://localhost:3000', 'http://localhost:3001');
+    }
+
+    return otherNodes;
+}
+
+function sendChainToOtherNodes(chain) {
+    const otherNodes = getOtherNodes();
+
+    otherNodes.forEach(node => {
+        axios.post(`${node}/receiveChain`, {chain})
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log(`Error sending chain to node ${node}: ${error.message}`);
+            });
+    });
+}
+
+function mineBlock(req, res, currentNodePort) {
     // const data = req.body.data;
     // const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
+    const blockchainCopy = estateLedger.getChain();
+    sendChainToOtherNodes(blockchainCopy);
     const latestBlock = estateLedger.getLatestBlock();
     const newBlock = new Block(latestBlock.index +1, new Date(), [], latestBlock.hash);
     estateLedger.mineBlock(newBlock);
-    pendingList = [];
-    res.json(newBlock);
-}
 
-function receiveChain(req, res) {
-    const receivedChain = req.body.chain;
-    const currentChain = estateLedger.getChain();
+    // const currentNodePort = req.app.get('port');
+    console.log('Current node port', currentNodePort);
 
-    if (receivedChain.length > currentChain.length) {
-        estateLedger.replaceChain(receivedChain);
-        res.json({message: 'Chain replaced with longer chain'});
-    } else {
-        res.json({message: 'No replacement needed'});
+    const otherNodes = getOtherNodes(currentNodePort);
+
+    if (currentNodePort === '3000') {
+        otherNodes.push('http://localhost:3001', 'http://localhost:3002');
+    } else if (currentNodePort === '3001') {
+        otherNodes.push('http://localhost:3000', 'http://localhost:3002');
+    } else if (currentNodePort === '3002') {
+        otherNodes.push('http://localhost:3000', 'http://localhost:3001');
     }
+
+    console.log('Other nodes', otherNodes);
+
+    setTimeout(() => {
+        // console.log('Sending new block', newBlock);
+
+        const promises = otherNodes.map(node => {
+            return fetch(`${node}/receiveChain`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // body: JSON.stringify({chain: newBlock}),
+                body: JSON.stringify({chain: JSON.stringify(blockchainCopy)}),
+            })
+                .then(response => response.json())
+                .catch(error => {
+                    console.log(`Error sending block to node ${node}: ${error.message}`);
+                });
+        });
+
+        Promise.all(promises)
+            .then(responses => {
+                console.log(responses);
+                pendingList = [];
+                res.json(newBlock);
+            })
+            .catch(error => {
+                console.log('Error', error.message);
+                res.status(500).json({error: 'Error sending block to nodes'});
+            })
+    }, 1000);
+    
 }
 
 function addProperty(req, res) {
