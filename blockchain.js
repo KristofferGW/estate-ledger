@@ -1,5 +1,5 @@
 const Block = require('./block');
-const {removeFromOwnership, addToOwnership, findOwner, propertyOwnership} = require('./ownership');
+const {addToOwnership, findOwner} = require('./ownership');
 
 class Blockchain {
     constructor() {
@@ -15,33 +15,16 @@ class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
-    // mineBlock(newBlock) {
-    //     while (newBlock.hash.substring(0, 2) !== '00') {
-    //         newBlock.nonce++;
-    //         newBlock.hash = newBlock.calculateHash();
-    //         console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
-    //     }
-
-    //     newBlock.transactions = pendingList;
-    //     pendingList = [];
-
-    //     console.log(`Block mined: ${newBlock.hash}`);
-    //     this.chain.push(newBlock);
-
-    // }
-
     mineBlock(newBlock) {
         const previousBlock = this.getLatestBlock();
 
         if (!newBlock.isHashValid(previousBlock)) {
-            console.log('Block not valid');
             return;
         }
 
         while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
-            // console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
         }
     
         newBlock.transactions = [...this.pendingList];
@@ -54,14 +37,11 @@ class Blockchain {
             if (owner) {
                 addToOwnership(owner, property);
             } else {
-                addToOwnership(user, property); // Lägg till fastigheten för användaren
+                addToOwnership(user, property);
             }
         });
     
         this.pendingList = [];
-    
-        console.log(`Block mined: ${newBlock.hash}`);
-        console.log('property ownership', propertyOwnership);
         this.chain.push(newBlock);
     }
 
@@ -70,8 +50,6 @@ class Blockchain {
             const currentBlock = new Block(chain[i]);
             const currentHash = currentBlock.calculateHash();
             const previousBlock = chain[i - 1];
-
-            console.log("currentBlock från is validchain", currentBlock);
 
             if (currentBlock.hash !== currentHash) {
                 return false;
@@ -88,17 +66,6 @@ class Blockchain {
     getChain() {
         return this.chain;
     }
-
-    replaceChain(newChain) {
-        if (this.isValidChain(newChain) && newChain.length > this.chain.length) {
-            this.chain = newChain;
-            console.log("this chain", this.chain);
-            console.log('Replacing chain with longer chain');
-        } else {
-            console.log('Chain not valid or not longer than current chain');
-        }
-    }
-    
 }
 
 module.exports = {Blockchain};
