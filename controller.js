@@ -6,6 +6,7 @@ const axios = require('axios');
 const estateLedger = new Blockchain();
 
 function isValidChain(chain) {
+    console.log("chain från isValidChain", chain);
     for (let i = 1; i < chain.length; i++) {
         // const currentBlock = chain[i];
         const currentBlock = new Block(
@@ -117,7 +118,7 @@ function mineBlock(req, res, currentNodePort) {
                     'Content-Type': 'application/json',
                 },
                 // body: JSON.stringify({chain: newBlock}),
-                body: JSON.stringify({chain: JSON.stringify(blockchainCopy)}),
+                body: JSON.stringify({chain: blockchainCopy}),
             })
                 .then(response => response.json())
                 .catch(error => {
