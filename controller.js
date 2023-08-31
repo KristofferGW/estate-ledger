@@ -31,8 +31,7 @@ function receiveChain(req, res) {
     console.log("currentChain från funktion", currentChain);
 
     if (receivedChain && receivedChain.length > currentChain.length && isValidChain(receivedChain)) {
-        // estateLedger.replaceChain(receivedChain);
-        estateLedger = new Blockchain(receivedChain);
+        estateLedger.chain = receivedChain;
         res.json({message: 'Chain replaced with longer chain'});
     } else {
         res.status(400).json({message: 'Invalid or shorter chain received'});
