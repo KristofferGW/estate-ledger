@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const controller = require('./controller');
-// const {Blockchain} = require('../blockchain');
-// const Block = require('../block');
+const {Blockchain} = require('./blockchain');
+const Block = require('./block');
 
 const app = express();
 const port = process.argv[2] || 3000;
@@ -19,8 +19,14 @@ app.post('/mine', (req, res) => {
     const currentNodePort = req.app.get('port');
     controller.mineBlock(req, res, currentNodePort);
 })
+
 app.post('/addProperty', controller.addProperty);
-app.post('/receiveChain', controller.receiveChain);
+
+app.post('/receiveChain', (req, res) => {
+    const chain = req.body.chain;
+    controller.receiveChain(req, res, chain);
+});
+
 app.post('/sendProperty', controller.sendProperty);
 
 app.listen(port, () => {

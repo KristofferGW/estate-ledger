@@ -41,7 +41,7 @@ class Blockchain {
         while (newBlock.hash.substring(0, 2) !== '00') {
             newBlock.nonce++;
             newBlock.hash = newBlock.calculateHash();
-            console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
+            // console.log(`Mining... Nonce: ${newBlock.nonce}, Hash: ${newBlock.hash}`);
         }
     
         newBlock.transactions = [...this.pendingList];
@@ -67,10 +67,13 @@ class Blockchain {
 
     isValidChain(chain) {
         for (let i = 1; i < chain.length; i++) {
-            const currentBlock = chain[i];
+            const currentBlock = new Block(chain[i]);
+            const currentHash = currentBlock.calculateHash();
             const previousBlock = chain[i - 1];
 
-            if (currentBlock.hash !== currentBlock.calculateHash()) {
+            console.log("currentBlock från is validchain", currentBlock);
+
+            if (currentBlock.hash !== currentHash) {
                 return false;
             }
 

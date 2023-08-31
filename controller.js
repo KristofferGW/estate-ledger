@@ -1,27 +1,22 @@
-let {Blockchain, pendingList} = require('./blockchain')
+let {Blockchain, pendingList} = require('./blockchain');
 const Block = require('./block');
 const propertyOwnership = require('./ownership');
 const axios = require('axios');
 
-const estateLedger = new Blockchain();
+let estateLedger = new Blockchain();
 
 function isValidChain(chain) {
-    console.log("chain från isValidChain", chain);
+    // console.log("chain från isValidChain", chain);
     for (let i = 1; i < chain.length; i++) {
         // const currentBlock = chain[i];
-        const currentBlock = new Block(
-            chain[i].index,
-            chain[i].timestamp,
-            chain[i].transactions,
-            chain[i].previousHash
-        );
+        const currentBlock = chain[i];
         const previousBlock = chain[i - 1];
 
-        if (currentBlock.hash !== currentBlock.calculateHash()) {
-            return false;
-        }
+        // if (currentBlock.hash !== currentBlock.calculateHash()) {
+        //     return false;
+        // }
 
-        if (currentBlock.previousBlock !== previousBlock.hash) {
+        if (currentBlock.previousHash !== previousBlock.hash) {
             return false;
         }
     }
@@ -31,11 +26,13 @@ function isValidChain(chain) {
 
 function receiveChain(req, res) {
     const receivedChain = req.body.chain;
-    // console.log(receivedChain);
+    console.log("receivedChain från funktion", receivedChain);
     const currentChain = estateLedger.getChain();
+    console.log("currentChain från funktion", currentChain);
 
     if (receivedChain && receivedChain.length > currentChain.length && isValidChain(receivedChain)) {
-        estateLedger.replaceChain(receivedChain);
+        // estateLedger.replaceChain(receivedChain);
+        estateLedger = new Blockchain(receivedChain);
         res.json({message: 'Chain replaced with longer chain'});
     } else {
         res.status(400).json({message: 'Invalid or shorter chain received'});
@@ -88,7 +85,7 @@ function mineBlock(req, res, currentNodePort) {
     // const data = req.body.data;
     // const newBlock = new Block(estateLedger.getLatestBlock().index + 1, new Date(), data);
     const blockchainCopy = estateLedger.getChain();
-    sendChainToOtherNodes(blockchainCopy);
+    // sendChainToOtherNodes(blockchainCopy);
     const latestBlock = estateLedger.getLatestBlock();
     const newBlock = new Block(latestBlock.index +1, new Date(), [], latestBlock.hash);
     estateLedger.mineBlock(newBlock);
@@ -112,17 +109,17 @@ function mineBlock(req, res, currentNodePort) {
         // console.log('Sending new block', newBlock);
 
         const promises = otherNodes.map(node => {
+            console.log('Node from otherNodes i promises', node);
             return fetch(`${node}/receiveChain`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // body: JSON.stringify({chain: newBlock}),
                 body: JSON.stringify({chain: blockchainCopy}),
             })
                 .then(response => response.json())
                 .catch(error => {
-                    console.log(`Error sending block to node ${node}: ${error.message}`);
+                    console.log(`Error sending chain to node ${node}: ${error.message}`);
                 });
         });
 
