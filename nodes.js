@@ -27,8 +27,6 @@ app.post('/receiveChain', (req, res) => {
     controller.receiveChain(req, res, chain);
 });
 
-app.post('/sendProperty', controller.sendProperty);
-
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
