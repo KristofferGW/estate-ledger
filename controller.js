@@ -60,6 +60,11 @@ function getOtherNodes(currentNodePort) {
 function mineBlock(req, res, currentNodePort) {
     const blockchainCopy = estateLedger.getChain();
     const latestBlock = estateLedger.getLatestBlock();
+
+    if (estateLedger.pendingList.length === 0) {
+        return res.status(400).json({message: 'There are no transactions to mine, fren.'});
+    }
+
     const newBlock = new Block(latestBlock.index +1, new Date(), [], latestBlock.hash);
     estateLedger.mineBlock(newBlock);
 
