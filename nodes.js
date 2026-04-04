@@ -9,6 +9,10 @@ app.set('port', port);
 
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
+
 app.get('/blocks', controller.getBlocks);
 
 app.post('/mine', (req, res) => {
